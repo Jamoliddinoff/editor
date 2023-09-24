@@ -85,7 +85,6 @@ const Rectangle = ({shape,handleDragStart,handleDragEnd,handleDragMove,onSelect,
                                   text:ev.target.value,
                                   // width:shape.width+ev.target.value.length
                               }))
-                              console.log('pressss----',ev.target.value.length)
                               if (ev.target.value.length>=10&&ev.target.value.length<=15){
                                   dispatch(setShape({
                                       id:shape.id,
@@ -94,7 +93,11 @@ const Rectangle = ({shape,handleDragStart,handleDragEnd,handleDragMove,onSelect,
                                   }))
                               }
                           }}
-                          style={{...style,fontSize:14,width:shape.width-40}}
+                          style={{
+                              ...style,
+                              fontSize:shape.fontSize||14,
+                              color:shape.textColor,
+                              width:shape.width-40}}
                           onKeyDown={(e)=>e.key==='Enter' && setTextarea(false)}
                       />
                 </Html>
@@ -105,8 +108,6 @@ const Rectangle = ({shape,handleDragStart,handleDragEnd,handleDragMove,onSelect,
                     rotateEnabled={false}
                     enabledAnchors={['top-left', 'top-right', 'bottom-left', 'bottom-right']}
                     boundBoxFunc={(oldBox, newBox) => {
-                        // limit resize
-                        console.log('oldBox-----',oldBox,'newBoxxxxx',newBox,shape)
                         const id=shape.id
                         if (newBox.width < 5 || newBox.height < 5) {
                             dispatch(setShape(

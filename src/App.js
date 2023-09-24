@@ -9,7 +9,6 @@ const App = () => {
     useEffect(()=>{
         document.body.style.background=background
     },[background])
-    console.log('=+++++++++++++',background)
     return (
      <div  style={{display:'flex',alignItems:'center'}}>
          <AppLayout/>

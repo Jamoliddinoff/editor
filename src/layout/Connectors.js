@@ -10,7 +10,6 @@ const Connectors = ({connectors,list,boardEnd}) => {
     const {eventsType:{type},shapes:{arrows}} = useSelector(store => store)
 
     const handleClick = (id) => {
-        console.log('clickeddddddd',arrows)
         EVENT_TYPES.TRASH == type && dispatch(clearArrow({id,arrowss:arrows}))
     }
     return (

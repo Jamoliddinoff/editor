@@ -1,8 +1,8 @@
 import { createSlice } from '@reduxjs/toolkit'
 
 const initialState = {
-    list:JSON.parse(localStorage.getItem('json'))?.list||[],
-    arrows:JSON.parse(localStorage.getItem('json'))?.arrows||[],
+    list:JSON?.parse(localStorage.getItem('json'))?.list || [],
+    arrows:JSON?.parse(localStorage.getItem('json'))?.arrows || [],
     shape:null,
     tempImage:null,
 }
@@ -63,7 +63,7 @@ export const shapesSlice = createSlice({
         clearBoard: (state) =>{
             state.list=[];
             state.arrows=[];
-            localStorage.setItem('json','');
+            localStorage.removeItem('json');
 
         },
 

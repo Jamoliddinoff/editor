@@ -39,7 +39,6 @@ const KonvaShape = ({shape,isSelected,onSelect,setChildDrag,boardEnd}) => {
     const handleDragEnd = (e) => {
         const {x,y} = e.target.position()
         // const {x,y} = e.target.getStage().getPointerPosition()
-        console.log('insideDragEnd-----',x,y)
         setTimeout(()=>{
             setChildDrag(false)
         },3000)

@@ -73,8 +73,6 @@ const PictureElement = ({
                     ref={trRef}
                     rotateEnabled={false}
                     boundBoxFunc={(oldBox, newBox) => {
-                        // limit resize
-                        console.log('oldBox-----',oldBox,'newBoxxxxx',newBox,shape)
                         const id=shape.id
                         if (newBox.width < 5 || newBox.height < 5) {
                             dispatch(setShape(

@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import styled from "styled-components";
 import {useDispatch, useSelector} from "react-redux";
 import {setBackground} from "../store/editorSlice";
@@ -12,7 +12,10 @@ const Navbar = () => {
     const dispatch = useDispatch();
     const {editor:{background},shapes:{shape,list,arrows}} = useSelector(store => store);
     const [openJson,setOpenJson] = useState(false);
-    console.log('shapeeeee----',shape)
+    const [colors,setColors] = useState(shape?.fill);
+    useEffect(()=>{
+        setColors(shape?.fill||shape?.textColor)
+    },[shape?.fill||shape?.textColor])
     return (
         <>
             <Wrapper>
@@ -66,10 +69,20 @@ const Navbar = () => {
                             }))}
                             value={shape?.fill} />
                     </ItemCenter>
+                    <ItemCenter>
+                        <p>Text color:</p>
+                        <ColorPicker
+                            type="color"
+                            id="head"
+                            name="head"
+                            onChange={e=>dispatch(setShape({
+                                id:shape?.id,
+                                textColor:e.target.value,
+                            }))}
+                            value={shape?.textColor} />
+                    </ItemCenter>
                 </ItemCenter>
-                <ItemCenter>
 
-                </ItemCenter>
 
             </Wrapper>
             {openJson &&

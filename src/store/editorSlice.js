@@ -10,7 +10,6 @@ export const editorSlice = createSlice({
     initialState,
     reducers: {
         setBackground: (state,action) => {
-            console.log('evvvvvvvvvvv',action)
             state.background=action.payload
         },
     },
