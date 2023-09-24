@@ -6,7 +6,6 @@ import shapes, {clearBoard, setShape} from "../store/shapesSlice";
 import trash from '../accetss/icons/trash.png'
 import jsonIcon from '../accetss/icons/json-icon.png'
 import closeIcon from '../accetss/icons/close.png'
-import {jsonHighlight} from "../utils";
 
 const Navbar = () => {
     const dispatch = useDispatch();
