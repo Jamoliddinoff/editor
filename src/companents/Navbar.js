@@ -7,6 +7,7 @@ import trash from '../accetss/icons/trash.png'
 import jsonIcon from '../accetss/icons/json-icon.png'
 import closeIcon from '../accetss/icons/close.png'
 import copyIcon from '../accetss/icons/copy-iocon.png'
+import downloadIcon from '../accetss/icons/download.svg'
 
 const Navbar = () => {
     const dispatch = useDispatch();
@@ -22,7 +23,6 @@ const Navbar = () => {
         const fileReader = new FileReader();
         fileReader.readAsText(e.target.files[0], "UTF-8");
         fileReader.onload = e => {
-            console.log("e.target.result", JSON.parse(e.target.result));
             dispatch(uploadJson(JSON.parse(e.target.result)))
         };
     };
@@ -107,7 +107,7 @@ const Navbar = () => {
                             <pre>{JSON.stringify({shapes:list,arrows}, null, 2)}</pre>
                         </div>
                         <JsonBtn>
-                            Upload JSON file
+                            <p>Upload JSON file</p> <img src={downloadIcon}/>
                             <input type="file" onChange={handleChangeJson} accept={'application/json'}/>
                         </JsonBtn>
                         <CopyIcon
@@ -146,7 +146,7 @@ const ItemCenter = styled.div`
   display: flex;
   align-items: center;
   gap: 10px;
-  
+
 `;
 const Colors = styled.div`
   width: 25px;
@@ -204,24 +204,33 @@ const ModalContainer = styled.div`
       height: 15px;
     }
   }
-  
+
 `
-const JsonBtn = styled.button`
+const JsonBtn = styled.section`
   border: none;
-  //width: 150px;
+  width: 170px;
   overflow: hidden;
-  padding: 8px 12px;
-  background: #ffae0c;
+  padding: 0px 8px;
+  background: #59a9cb;
   color: black;
   position: relative;
   border-radius: 10px;
-  font-weight: bold;
-  input{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  p {
+    color: black;
+    font-weight: bold;
+    font-size: 14px;
+    //border: 1px solid;
+  }
+
+  input {
     position: absolute;
-    border: 1px solid red;
     left: 0px;
     top: 0px;
-    height: 30px;
+    height: 40px;
     opacity: 0;
   }
 `;
@@ -229,7 +238,7 @@ const JsonBtn = styled.button`
 const CopyIcon = styled.div`
   position: absolute;
   right: 35px;
-  bottom: 60px;
+  bottom: 75px;
   width: 30px;
   height: 30px;
   border-radius: 50%;

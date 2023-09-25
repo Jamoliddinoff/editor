@@ -27,6 +27,13 @@ const LeftPanel = () => {
         dispatch(setEvent(type));
         setOpenShapes(false)
     }
+    const fileToDataUri = (file) => new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            resolve(event.target.result)
+        };
+        reader.readAsDataURL(file);
+    })
 
     const handleImageInput = (e) => {
         if(e.target.files[0]){
@@ -34,17 +41,20 @@ const LeftPanel = () => {
             const imag = new Image();
             imag.src = img;
             imag.onload = () => {
+                let width = imag.width<300 ? imag.width : 300;
                 if(e.target.files[0]){
-                    dispatch(getTempImage({
-                        type,
-                        width:350,
-                        height:(350*imag.height)/imag.width,
-                        x: 100,
-                        y: 100,
-                        image:img,
-                        isDragging: false,
-                    }))
-                    // handleEvents(EVENT_TYPES.CURSOR);
+                    fileToDataUri(e.target.files[0])
+                        .then(dataUri => {
+                            dispatch(getTempImage({
+                                type,
+                                width:width,
+                                height:(width*imag.height)/imag.width,
+                                x: 100,
+                                y: 100,
+                                image:dataUri,
+                                isDragging: false,
+                            }))
+                        })
                 }
             };
         }

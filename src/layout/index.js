@@ -65,9 +65,11 @@ const AppLayout = () => {
             document.body.style.cursor=null;
 
         }
-        if(EVENT_TYPES.CURSOR!==type){
+        if(EVENT_TYPES.ARROW==type){
             setScale(1);
             setPosition({x:0,y:0});
+            setArrowPosition(null);
+            setFromShape(null);
             stageRef=null
         }
     },[type])
@@ -185,11 +187,14 @@ const AppLayout = () => {
         else if(type===EVENT_TYPES.IMAGES){
                     const data = {
                         ...tempImage,
+                        fill:"#84c1e5",
                         x: x-boardEnd.x,
                         y: y-boardEnd.y,
                     }
                     dispatch(createShape(data))
-                    dispatch(setEvent(EVENT_TYPES.CURSOR))
+                    dispatch(setEvent(EVENT_TYPES.CURSOR));
+            // window.location.reload(false);
+
         }
 
         if(EVENT_TYPES.ARROW===type){
@@ -223,8 +228,6 @@ const AppLayout = () => {
 
         if (EVENT_TYPES.HOTSPOT== type){
             if(element?.image){
-                console.log('elementtttttttt',element);
-                console.log('x:',x1,'y: ',y1);
                 setChildShape({
                     parentId:element.id,
                     x1:x1,
@@ -280,8 +283,6 @@ const AppLayout = () => {
 
         if (EVENT_TYPES.HOTSPOT== type){
             if(element?.image){
-                console.log('elementtttttttt',element);
-                console.log('x:',x1,'y: ',y1);
                 if(childShape){
                     dispatch(createHotspotChild({childShape,list}))
                     setChildShape(null)
@@ -381,7 +382,6 @@ const AppLayout = () => {
 
 
     const onMouseEnterHandler=(e)=>{
-        console.log(e)
         e.target.fill('blue');
         stageRef.draw();
         setState({
@@ -397,7 +397,6 @@ const AppLayout = () => {
             zoom:false
         })
     };
-    console.log('shape++++++++++++++++++++++++++',childShape)
     return (
         <Stage
             width={window.innerWidth}

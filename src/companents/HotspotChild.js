@@ -30,7 +30,6 @@ const HotspotChild = ({child,shape,handleDragStart,handleDragEnd,handleDragMove,
     const handleClick = () => {
         onSelect()
         EVENT_TYPES.CURSOR == type && dispatch(handleShape(child));
-        console.log('borderrr=========================>',child)
 
         EVENT_TYPES.TRASH == type && shape.id && dispatch(removeShape({id:child.id,parentId:shape.id,list}))
     }
@@ -84,6 +83,8 @@ const HotspotChild = ({child,shape,handleDragStart,handleDragEnd,handleDragMove,
                                 {
                                     width:oldBox.width,
                                     height:oldBox.height,
+                                    parentId:shape.id,
+                                    list,
                                     id
                                 }))
                             return oldBox;
@@ -91,6 +92,8 @@ const HotspotChild = ({child,shape,handleDragStart,handleDragEnd,handleDragMove,
                         dispatch(setShape({
                             width:newBox.width,
                             height:newBox.height,
+                            parentId:shape.id,
+                            list,
                             id
                         }))
                         return newBox;

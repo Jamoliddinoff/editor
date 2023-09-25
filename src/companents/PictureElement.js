@@ -49,8 +49,11 @@ const PictureElement = ({
                 y={shape?.y}
                 width={shape.width}
                 height={shape.height}
-                fill={shape?.fill}
-                opacity={0.9}
+                // fill={shape?.fill}
+                strokeWidth={1}
+                stroke={'#000000'}
+
+                opacity={0.8}
                 draggable={EVENT_TYPES.CURSOR === type}
                 shadowColor="black"
                 shadowBlur={shape.isDragging ? 10 : 0}
@@ -90,6 +93,7 @@ const PictureElement = ({
                 <Transformer
                     ref={trRef}
                     rotateEnabled={false}
+                    enabledAnchors={['top-left', 'top-right', 'bottom-left', 'bottom-right']}
                     boundBoxFunc={(oldBox, newBox) => {
                         const id=shape.id
                         if (newBox.width < 5 || newBox.height < 5) {

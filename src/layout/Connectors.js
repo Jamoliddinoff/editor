@@ -32,9 +32,6 @@ const Connectors = ({connectors,list,boardEnd}) => {
                             }
 
                         }
-                        console.log('fromParent----',fromParent,con)
-                        console.log('fromItem----',fromItem)
-
                     } else {
                         let toParent = list.find(x=>x.id===con?.toParent);
                         if (toParent?.children){
@@ -46,8 +43,6 @@ const Connectors = ({connectors,list,boardEnd}) => {
                             }
 
                         }
-                        console.log('toItem----',toItem)
-
                     }
                 }
                 const from = getShapeSidePosition(fromItem, con.fromSide);

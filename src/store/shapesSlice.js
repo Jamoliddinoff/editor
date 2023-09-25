@@ -22,7 +22,33 @@ export const shapesSlice = createSlice({
         },
         setShape: (state,action) => {
             const findElement = state.list.findIndex(item => item.id === action.payload.id);
-            state.list[findElement] = {...state.list[findElement],...action.payload}
+            if(action.payload?.parentId){
+                let list = [...action.payload?.list];
+                let parent = list.find(x=>x.id===action.payload?.parentId)
+                if(parent?.children){
+                    let child = parent?.children.find(y=>y.id==action.payload.id);
+                    let childIdx = parent?.children.findIndex(y=>y.id==action.payload.id);
+                    let children = [...parent.children];
+                    children[childIdx]={
+                        ...child,
+                        width:action.payload.width,
+                        height:action.payload.height,
+                    };
+
+                    if(child.id){
+                        parent={
+                            ...parent,
+                            children:children,
+                        }
+                        const i = state.list.findIndex(item => item.id === action.payload.parentId);
+                        list[i] = parent
+                        state.list=list
+                    }
+                }
+
+            } else {
+                state.list[findElement] = {...state.list[findElement], ...action.payload}
+            }
             localStorage.setItem('json',JSON.stringify({...state}))
 
         },
@@ -36,12 +62,10 @@ export const shapesSlice = createSlice({
             localStorage.setItem('json',JSON.stringify({...state}))
 
         },
+
         createHotspotChild:(state,action) => {
             const findIndex = state.list.findIndex(item => item.id === action.payload.childShape.parentId);
             const findElement = action.payload.list.find(item => item.id === action.payload.childShape.parentId);
-            // const findElement = state.list[findIndex];
-            console.log('findElement-->>>>>>>>>>-',findIndex)
-            console.log('find-->>>>>>>>>>>>-',findElement)
             if(findElement){
                 if(findElement.children){
                     state.list[findIndex] = {
@@ -68,20 +92,22 @@ export const shapesSlice = createSlice({
 
                 localStorage.setItem('json',JSON.stringify({...state}))
             }
-
         },
+
         removeShape: (state, action) => {
             const findElement = state.list.findIndex(item => item.id === action.payload.id);
-
             if(action.payload?.parentId){
-                let parent = action.payload?.list.find(x=>x.id===action.payload?.parentId)
+                let list = action.payload?.list;
+                let parent = list.find(x=>x.id===action.payload?.parentId)
                 if(parent?.children){
                     let child = parent?.children.find(y=>y.id==action.payload.id);
-                    if(child>=0){
+
+                    if(child.id){
                         parent={
                             ...parent,
                             children:parent?.children.filter(x=>x.id!=child.id)
                         }
+                        debugger
                         state.list=[...action.payload.list,parent]
                     }
                 }
