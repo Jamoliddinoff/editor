@@ -59,7 +59,7 @@ const RhombElement = ({shape,handleDragStart,handleDragEnd,handleDragMove,onSele
                 onMouseLeave={()=>setBorder(false)}
                 onClick={handleClick}
                 onTap={handleClick}
-                zIndex={999}
+                zIndex={1}
             />
             {isSelected && type===EVENT_TYPES.CURSOR && (
                 <Transformer

@@ -1,7 +1,15 @@
 import React, {useEffect, useRef, useState} from 'react';
-import {Stage, Layer, Star, Text, Rect, Arrow, Circle, Group} from 'react-konva';
+import {Stage, Layer, Star, Text, Rect, Arrow, Circle, Group, Label} from 'react-konva';
 import {useDispatch, useSelector} from "react-redux";
-import shapes, {clearArrow, createArrow, createShape, setAllShapes, setArrow, setShape} from "../store/shapesSlice";
+import shapes, {
+    clearArrow,
+    createArrow,
+    createHotspotChild,
+    createShape,
+    setAllShapes,
+    setArrow,
+    setShape
+} from "../store/shapesSlice";
 import Shapes from "./Shapes";
 import Connectors from "./Connectors";
 import eventsType, {setEvent} from "../store/eventsSlice";
@@ -17,20 +25,28 @@ const AppLayout = () => {
     } = useSelector(store => store)
     const dispatch = useDispatch();
     let stageRef = useRef(null);
+    let childElem = useRef(null);
     const [boardEnd,setBoardEnd] = useState({x:0,y:0});
     const [arrowPosition,setArrowPosition] = useState(null)
     const [formShape,setFromShape] = useState(null)
     const [childDrag,setChildDrag] = useState(false)
     const [scale, setScale] = useState(1);
     const [position, setPosition] = useState({ x: 0, y: 0 });
+    const [state,setState]= useState({
+        hovered:false,
+        zoom:false
+    })
+    const [childShape,setChildShape] = useState()
 
     useEffect(()=>{
+        childElem.zIndex=9999999999999;
         if(
             EVENT_TYPES.RECTANGLE===type||
             EVENT_TYPES.ROUNDED_RECTANGLE===type||
             EVENT_TYPES.SHAPES===type||
             EVENT_TYPES.CIRCLE===type||
-            EVENT_TYPES.RHOMB===type)
+            EVENT_TYPES.RHOMB===type
+        )
         {
             document.body.style.cursor='crosshair'
         }
@@ -42,6 +58,8 @@ const AppLayout = () => {
         }
         else if(EVENT_TYPES.IMAGES===type){
             document.body.style.cursor='copy'
+        }else if(EVENT_TYPES.HOTSPOT===type){
+            document.body.style.cursor='no-drop'
         }
         else {
             document.body.style.cursor=null;
@@ -150,6 +168,20 @@ const AppLayout = () => {
             dispatch(createShape(data))
             dispatch(setEvent(EVENT_TYPES.CURSOR))
         }
+        // else if(type===EVENT_TYPES.LINK){
+        //     const data = {
+        //         type,
+        //         width:350,
+        //         height:350,
+        //         fill:"#84c1e5",
+        //         x: x-boardEnd.x,
+        //         y: y-boardEnd.y,
+        //         isDragging: false,
+        //
+        //     }
+        //     dispatch(createShape(data))
+        //     dispatch(setEvent(EVENT_TYPES.CURSOR))
+        // }
         else if(type===EVENT_TYPES.IMAGES){
                     const data = {
                         ...tempImage,
@@ -158,23 +190,49 @@ const AppLayout = () => {
                     }
                     dispatch(createShape(data))
                     dispatch(setEvent(EVENT_TYPES.CURSOR))
-                }
+        }
 
         if(EVENT_TYPES.ARROW===type){
             if(element?.id){
                 setArrowPosition({...arrowPosition,fromX:getPosition?.x,fromY:getPosition?.y,from:element?.id})
                 const shape=e.target.attrs;
                 const id = Math.round(Math.random()*10000)
-                const newConnector = {
-                    from: element.id,
-                    fromSide:getShapeSide(x1,y1,shape),
-                    id: id
-                };
+                let newConnector={}
+                if(shape.class){
+                    newConnector = {
+                        from: element.id,
+                        fromSide:getShapeSide(x1,y1,shape),
+                        id: id,
+                        fromParent:shape.class,
+                        fromX:x1,
+                        fromY:y1,
+                        // fromX:getPosition?.x,
+                        // fromY:getPosition?.y,
+                    }
+                }else{
+                    newConnector = {
+                        from: element.id,
+                        fromSide:getShapeSide(x1,y1,shape),
+                        id: id,
+                    };
+                }
                 dispatch(createArrow(newConnector));
                 setFromShape({...element,arrowId:id})
-
             }
+        }
 
+        if (EVENT_TYPES.HOTSPOT== type){
+            if(element?.image){
+                console.log('elementtttttttt',element);
+                console.log('x:',x1,'y: ',y1);
+                setChildShape({
+                    parentId:element.id,
+                    x1:x1,
+                    y1:y1,
+                    x:element.x+x1,
+                    y:element.y+y1,
+                })
+            }
         }
     };
 
@@ -190,11 +248,23 @@ const AppLayout = () => {
 
         if(EVENT_TYPES.ARROW===type) {
             if(formShape?.id&&formShape?.id!==element.id){
-                const setConnector = {
-                    id:formShape.arrowId,
-                    to: element?.id,
-                    toSide:getShapeSide(x1,y1,element),
-                };
+                let setConnector={};
+                if(element.class) {
+                    setConnector = {
+                        id:formShape.arrowId,
+                        to: element?.id,
+                        toSide:getShapeSide(x1,y1,element),
+                        toX:x1,
+                        toY:y1,
+                        toParent:element.class
+                    }
+                }else{
+                    setConnector = {
+                        id:formShape.arrowId,
+                        to: element?.id,
+                        toSide:getShapeSide(x1,y1,element),
+                    }
+                }
                 setArrowPosition({...arrowPosition,toX:getPosition?.x,toY:getPosition?.y,to:element?.id})
                 if(element?.id){
                     dispatch(setArrow(setConnector));
@@ -205,6 +275,18 @@ const AppLayout = () => {
                     setArrowPosition(null)
                     setFromShape(null)
                 }
+            }
+        }
+
+        if (EVENT_TYPES.HOTSPOT== type){
+            if(element?.image){
+                console.log('elementtttttttt',element);
+                console.log('x:',x1,'y: ',y1);
+                if(childShape){
+                    dispatch(createHotspotChild({childShape,list}))
+                    setChildShape(null)
+                }
+
             }
         }
 
@@ -232,8 +314,24 @@ const AppLayout = () => {
             else arrowPosition && setArrowPosition({...arrowPosition,toX:x-boardEnd.x,toY:y-boardEnd.y})
         }
         // console.log('x1: ',x1,' y1: ',y1);
+        // console.log('x: ',x,' y: ',y);
         // console.log('shape: ',e.target.attrs)
         // getShapeSide(x,y)
+        if (EVENT_TYPES.HOTSPOT== type){
+            if(element?.image){
+                setChildShape(prevState => {
+                   return {
+                       ...prevState,
+                       width:x-prevState?.x-boardEnd.x,
+                       height: y-prevState?.y-boardEnd.y
+                   }
+                })
+                document.body.style.cursor='crosshair'
+            }else {
+                document.body.style.cursor='no-drop'
+
+            }
+        }
     };
 
     const DrawArrow = () => {
@@ -255,6 +353,24 @@ const AppLayout = () => {
 
         />
     }
+    const DrawHotspot = () => {
+        // const {fromX, fromY, toX, toY,fromId,toId} = arrowPosition;
+        const direction = [arrowPosition?.fromX, arrowPosition?.fromY, arrowPosition?.toX, arrowPosition?.toY]
+        return EVENT_TYPES.HOTSPOT===type && <Rect
+            ref={childElem}
+            fill={'#75bde8'}
+            opacity={0.5}
+            strokeWidth={1.5}
+            stroke={'#000000'}
+            pointerAtBeginning={false}
+            x={childShape?.x}
+            y={childShape?.y}
+            width={childShape?.width}
+            height={childShape?.height}
+            zIndex={9999999999999999999}
+
+        />
+    }
     const handleDragEnds = (e) => {
         const {x,y} = e.target.position()
         !childDrag  && setBoardEnd({x,y})
@@ -264,7 +380,24 @@ const AppLayout = () => {
     };
 
 
-
+    const onMouseEnterHandler=(e)=>{
+        console.log(e)
+        e.target.fill('blue');
+        stageRef.draw();
+        setState({
+            hovered:true,
+            zoom:true
+        })
+    }
+    const onMouseLeaveHandler=(e)=>{
+        e.target.fill('white');
+        stageRef.draw();
+        setState({
+            hovered:false,
+            zoom:false
+        })
+    };
+    console.log('shape++++++++++++++++++++++++++',childShape)
     return (
         <Stage
             width={window.innerWidth}
@@ -285,7 +418,7 @@ const AppLayout = () => {
             <Layer>
                 <Group >
                     {DrawArrow()}
-
+                    {DrawHotspot()}
                     <Connectors  connectors={arrows} list={list} boardEnd={boardEnd}/>
                     <Shapes list={list} setChildDrag={(bool)=>setChildDrag(bool)} boardEnd={boardEnd}/>
                 </Group>

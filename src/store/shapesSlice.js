@@ -14,7 +14,7 @@ export const shapesSlice = createSlice({
     reducers: {
         createShape: (state,action) => {
             state.list.push({
-                id: Math.round(Math.random()*10000),
+                id: Math.round(Math.random()*1000000),
                 ...action.payload
             })
             localStorage.setItem('json',JSON.stringify({...state}))
@@ -26,9 +26,70 @@ export const shapesSlice = createSlice({
             localStorage.setItem('json',JSON.stringify({...state}))
 
         },
+        uploadJson:(state,action) => {
+            if(action.payload.shapes){
+                state.list=action.payload.shapes;
+            }
+            if(action.payload.arrows){
+                state.arrows=action.payload.arrows;
+            }
+            localStorage.setItem('json',JSON.stringify({...state}))
+
+        },
+        createHotspotChild:(state,action) => {
+            const findIndex = state.list.findIndex(item => item.id === action.payload.childShape.parentId);
+            const findElement = action.payload.list.find(item => item.id === action.payload.childShape.parentId);
+            // const findElement = state.list[findIndex];
+            console.log('findElement-->>>>>>>>>>-',findIndex)
+            console.log('find-->>>>>>>>>>>>-',findElement)
+            if(findElement){
+                if(findElement.children){
+                    state.list[findIndex] = {
+                        ...findElement,
+                        children:[
+                            ...findElement?.children,
+                            {
+                                ...action.payload.childShape,
+                                id: Math.round(Math.random()*1000000)
+                            }
+                        ]
+                    }
+                } else {
+                    state.list[findIndex] = {
+                        ...findElement,
+                        children:[
+                            {
+                                ...action.payload.childShape,
+                                id: Math.round(Math.random()*1000000)
+                            }
+                        ]
+                    }
+                }
+
+                localStorage.setItem('json',JSON.stringify({...state}))
+            }
+
+        },
         removeShape: (state, action) => {
             const findElement = state.list.findIndex(item => item.id === action.payload.id);
-            state.list.splice(findElement,1)
+
+            if(action.payload?.parentId){
+                let parent = action.payload?.list.find(x=>x.id===action.payload?.parentId)
+                if(parent?.children){
+                    let child = parent?.children.find(y=>y.id==action.payload.id);
+                    if(child>=0){
+                        parent={
+                            ...parent,
+                            children:parent?.children.filter(x=>x.id!=child.id)
+                        }
+                        state.list=[...action.payload.list,parent]
+                    }
+                }
+
+            } else {
+                state.list.splice(findElement,1)
+            }
+
             localStorage.setItem('json',JSON.stringify({...state}))
 
         },
@@ -77,6 +138,19 @@ export const shapesSlice = createSlice({
 })
 
 // Action creators are generated for each case reducer function
-export const { createShape, setShape, removeShape,createArrow,setArrow ,clearArrow,clearBoard,setAllShapes,handleShape,getTempImage} = shapesSlice.actions
+export const {
+    createShape,
+    setShape,
+    removeShape,
+    createArrow,
+    setArrow,
+    clearArrow,
+    clearBoard,
+    setAllShapes,
+    handleShape,
+    getTempImage,
+    createHotspotChild,
+    uploadJson
+} = shapesSlice.actions
 
 export default shapesSlice.reducer;

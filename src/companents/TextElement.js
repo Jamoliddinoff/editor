@@ -95,7 +95,7 @@ const TextElement = ({
                 onTap={handleClick}
                 onDblClick={handleDblClick}
                 onDblTap={handleDblClick}
-                zIndex={999}
+                zIndex={1}
             />
             {  isSelected && type==EVENT_TYPES.CURSOR ?
                 <Transformer

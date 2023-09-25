@@ -53,7 +53,7 @@ const CircleElement = ({shape,handleDragStart,handleDragEnd,handleDragMove,onSel
                 onDragStart={handleDragStart}
                 onDragEnd={handleDragEnd}
                 onDragMove={handleDragMove}
-                zIndex={999}
+                zIndex={1}
                 onClick={handleClick}
                 onTap={handleClick}
                 onMouseMove={(e)=>setBorder(true)}

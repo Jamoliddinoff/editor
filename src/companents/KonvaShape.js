@@ -1,11 +1,9 @@
 import React, {useEffect, useState} from 'react';
 import {useDispatch, useSelector} from "react-redux";
 import {EVENT_TYPES} from "../constants";
-import {Circle, Rect, Text, Transformer} from "react-konva";
 import {setShape} from "../store/shapesSlice";
 import PictureElement from "./PictureElement";
 import TextElement, {getStyle} from "./TextElement";
-import {Html} from "react-konva-utils";
 import Rectangle from "./Rectangle";
 import RhombElement from "./RhombElement";
 import CircleElement from "./CircleElement";
@@ -138,7 +136,7 @@ const KonvaShape = ({shape,isSelected,onSelect,setChildDrag,boardEnd}) => {
         )
     }
 
-    return <Rect.Fragment></Rect.Fragment>
+    return <React.Fragment></React.Fragment>
 };
 
 export default KonvaShape;

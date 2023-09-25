@@ -10,6 +10,7 @@ import rectangleIcon from '../accetss/icons/rectangle.png'
 import roundedRectangle from '../accetss/icons/rounded-rectangle.png'
 import circleIcon from '../accetss/icons/circle.png'
 import rhombIcon from '../accetss/icons/rhomb.png'
+import tooltipicon from '../accetss/icons/connection-points.png'
 import {useDispatch, useSelector} from "react-redux";
 import eventsType, {setEvent} from "../store/eventsSlice";
 import {EVENT_TYPES} from "../constants";
@@ -36,9 +37,8 @@ const LeftPanel = () => {
                 if(e.target.files[0]){
                     dispatch(getTempImage({
                         type,
-                        width:200,
-                        height:(200*imag.height)/imag.width,
-                        // fill:"#84c1e5",
+                        width:350,
+                        height:(350*imag.height)/imag.width,
                         x: 100,
                         y: 100,
                         image:img,
@@ -141,6 +141,13 @@ const LeftPanel = () => {
                         id='input_file'
                         accept={'image/png, image/jpeg, image/jpg'}
                     />
+                </Item>
+            </Tooltip>
+            <Tooltip title={'Hotspot'}>
+                <Item
+                    onClick={()=>handleEvents(EVENT_TYPES.HOTSPOT)}
+                    style={{background:type === EVENT_TYPES.HOTSPOT ? "#4a515d" : null}}>
+                    <img src={tooltipicon}/>
                 </Item>
             </Tooltip>
             <Tooltip title={'Clear item'}>

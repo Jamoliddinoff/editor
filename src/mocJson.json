@@ -1,0 +1,136 @@
+{
+  "shapes": [
+    {
+      "id": 152709,
+      "type": "RECTANGLE",
+      "width": 150,
+      "height": 150,
+      "fill": "#84c1e5",
+      "text": "Text here...",
+      "textColor": "#202021",
+      "fontSize": 14,
+      "x": 597,
+      "y": 405,
+      "isDragging": false
+    },
+    {
+      "id": 867912,
+      "type": "ROUNDED_RECTANGLE",
+      "width": 150,
+      "height": 150,
+      "fill": "#84c1e5",
+      "text": "Text here...",
+      "textColor": "#202021",
+      "fontSize": 14,
+      "x": 1028,
+      "y": 312,
+      "isDragging": false
+    },
+    {
+      "id": 129629,
+      "type": "RHOMB",
+      "width": 150,
+      "height": 150,
+      "fill": "#84c1e5",
+      "text": "Text here...",
+      "textColor": "#202021",
+      "fontSize": 14,
+      "rotation": 45,
+      "x": 880,
+      "y": 644,
+      "isDragging": false
+    },
+    {
+      "id": 686441,
+      "type": "IMAGES",
+      "width": 350,
+      "height": 466.6666666666667,
+      "x": 1506,
+      "y": 389,
+      "image": "blob:http://localhost:3000/187966cc-b5d7-4abb-8851-972f04deb360",
+      "isDragging": false,
+      "children": [
+        {
+          "parentId": 686441,
+          "x1": 53,
+          "y1": 41,
+          "x": 1447,
+          "y": 496,
+          "width": 186,
+          "height": 52,
+          "id": 806146
+        },
+        {
+          "parentId": 686441,
+          "x1": 67,
+          "y1": 235,
+          "x": 1461,
+          "y": 690,
+          "width": 166,
+          "height": 86,
+          "id": 594715
+        }
+      ]
+    }
+  ],
+  "arrows": [
+    {
+      "from": 152709,
+      "fromSide": "right",
+      "id": 7035,
+      "to": 867912,
+      "toSide": "left"
+    },
+    {
+      "from": 152709,
+      "fromSide": "right",
+      "id": 7648,
+      "to": 129629,
+      "toSide": "top"
+    },
+    {
+      "from": 867912,
+      "fromSide": "right",
+      "id": 6557,
+      "to": 686441,
+      "toSide": "top"
+    },
+    {
+      "from": 129629,
+      "fromSide": "right",
+      "id": 4965,
+      "to": 806146,
+      "toSide": "left",
+      "toX": 2,
+      "toY": 29,
+      "toParent": 686441
+    },
+    {
+      "from": 129629,
+      "fromSide": "right",
+      "id": 8736,
+      "to": 594715,
+      "toSide": "left",
+      "toX": 9,
+      "toY": 46,
+      "toParent": 686441
+    },
+    {
+      "from": 867912,
+      "fromSide": "right",
+      "id": 4,
+      "to": 594715,
+      "toSide": "left",
+      "toX": 19,
+      "toY": 45,
+      "toParent": 686441
+    },
+    {
+      "from": 129629,
+      "fromSide": "top",
+      "id": 6645,
+      "to": 867912,
+      "toSide": "bottom"
+    }
+  ]
+}

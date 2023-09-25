@@ -2,19 +2,30 @@ import React, {useEffect, useState} from 'react';
 import styled from "styled-components";
 import {useDispatch, useSelector} from "react-redux";
 import {setBackground} from "../store/editorSlice";
-import shapes, {clearBoard, setShape} from "../store/shapesSlice";
+import shapes, {clearBoard, setShape, uploadJson} from "../store/shapesSlice";
 import trash from '../accetss/icons/trash.png'
 import jsonIcon from '../accetss/icons/json-icon.png'
 import closeIcon from '../accetss/icons/close.png'
+import copyIcon from '../accetss/icons/copy-iocon.png'
 
 const Navbar = () => {
     const dispatch = useDispatch();
     const {editor:{background},shapes:{shape,list,arrows}} = useSelector(store => store);
     const [openJson,setOpenJson] = useState(false);
     const [colors,setColors] = useState(shape?.fill);
+
     useEffect(()=>{
         setColors(shape?.fill||shape?.textColor)
     },[shape?.fill||shape?.textColor])
+
+    const handleChangeJson = e => {
+        const fileReader = new FileReader();
+        fileReader.readAsText(e.target.files[0], "UTF-8");
+        fileReader.onload = e => {
+            console.log("e.target.result", JSON.parse(e.target.result));
+            dispatch(uploadJson(JSON.parse(e.target.result)))
+        };
+    };
     return (
         <>
             <Wrapper>
@@ -56,6 +67,7 @@ const Navbar = () => {
             </Wrapper>
             <Wrapper style={{display:shape?.id?'flex':'none',   top:55.5}}>
                 <ItemCenter>
+                    {shape?.fill &&
                     <ItemCenter>
                         <p>Shape color:</p>
                         <ColorPicker
@@ -67,7 +79,8 @@ const Navbar = () => {
                                 fill:e.target.value,
                             }))}
                             value={shape?.fill} />
-                    </ItemCenter>
+                    </ItemCenter>}
+                    {shape?.textColor &&
                     <ItemCenter>
                         <p>Text color:</p>
                         <ColorPicker
@@ -79,7 +92,7 @@ const Navbar = () => {
                                 textColor:e.target.value,
                             }))}
                             value={shape?.textColor} />
-                    </ItemCenter>
+                    </ItemCenter>}
                 </ItemCenter>
 
 
@@ -90,9 +103,17 @@ const Navbar = () => {
                         <span onClick={()=>setOpenJson(false)}>
                             <img src={closeIcon}/>
                         </span>
-                        <div>
+                        <div style={{position:'relative'}}>
                             <pre>{JSON.stringify({shapes:list,arrows}, null, 2)}</pre>
                         </div>
+                        <JsonBtn>
+                            Upload JSON file
+                            <input type="file" onChange={handleChangeJson} accept={'application/json'}/>
+                        </JsonBtn>
+                        <CopyIcon
+                            onClick={()=>navigator.clipboard.writeText(JSON.stringify({shapes:list,arrows}))}>
+                            <img src={copyIcon} alt={'Copy to clipboard'} title={'Copy to clipboard'}/>
+                        </CopyIcon>
                     </ModalContainer>
                 </Modal>
             }
@@ -185,6 +206,51 @@ const ModalContainer = styled.div`
   }
   
 `
+const JsonBtn = styled.button`
+  border: none;
+  //width: 150px;
+  overflow: hidden;
+  padding: 8px 12px;
+  background: #ffae0c;
+  color: black;
+  position: relative;
+  border-radius: 10px;
+  font-weight: bold;
+  input{
+    position: absolute;
+    border: 1px solid red;
+    left: 0px;
+    top: 0px;
+    height: 30px;
+    opacity: 0;
+  }
+`;
+
+const CopyIcon = styled.div`
+  position: absolute;
+  right: 35px;
+  bottom: 60px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: #e5e5e5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border: none !important;
+
+  &:hover {
+    background: #d3d3d3;
+  }
+
+  img {
+    width: 20px;
+    height: 20px;
+  }
+
+
+`;
 
 
 

@@ -7,6 +7,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {getStyle} from "./TextElement";
 import styled from "styled-components";
 import {Html} from "react-konva-utils";
+import HotspotChild from "./HotspotChild";
 
 const PictureElement = ({
                             shape,
@@ -21,12 +22,14 @@ const PictureElement = ({
     const {eventsType:{type}} = useSelector(store => store)
     const shapeRef = React.useRef();
     const trRef = React.useRef();
+    const brRef = React.useRef();
     const [border,setBorder] = useState(false);
 
     useEffect(() => {
         if (isSelected) {
             trRef.current?.nodes([shapeRef.current]);
             trRef.current?.getLayer().batchDraw();
+
         }
     }, [isSelected]);
 
@@ -54,20 +57,35 @@ const PictureElement = ({
                 shadowOpacity={shape.isDragging ? 0.3:0}
                 shadowOffsetX={shape.isDragging ? 10 : 5}
                 shadowOffsetY={shape.isDragging ? 10 : 5}
-                scaleX={shape.isDragging ? 1.2 : 1}
-                scaleY={shape.isDragging ? 1.2 : 1}
+                // scaleX={shape.isDragging ? 1.2 : 1}
+                // scaleY={shape.isDragging ? 1.2 : 1}
                 onDragStart={handleDragStart}
                 onDragEnd={handleDragEnd}
                 onDragMove={handleDragMove}
                 onSelect={onSelect}
-                zIndex={999}
+                zIndex={1}
                 isSelected={isSelected}
                 onClick={handleClick}
                 onTap={handleClick}
                 image={image}
                 onMouseMove={(e)=>setBorder(true)}
                 onMouseLeave={()=>setBorder(false)}
+
             />
+            {
+                shape?.children && shape?.children.map(child => (
+                    <HotspotChild
+                        key={child.i}
+                        child={child}
+                        shape={shape}
+                        handleDragStart={handleDragStart}
+                        handleDragEnd={handleDragEnd}
+                        handleDragMove={handleDragMove}
+                        onSelect={onSelect}
+                        isSelected={isSelected}
+                    />
+                ))
+            }
             {isSelected && type===EVENT_TYPES.CURSOR && (
                 <Transformer
                     ref={trRef}

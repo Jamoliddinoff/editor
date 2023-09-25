@@ -53,7 +53,7 @@ const Rectangle = ({shape,handleDragStart,handleDragEnd,handleDragMove,onSelect,
                 onDragStart={handleDragStart}
                 onDragEnd={handleDragEnd}
                 onDragMove={handleDragMove}
-                zIndex={999}
+                zIndex={1}
                 onClick={handleClick}
                 onTap={handleClick}
                 onMouseMove={(e)=>setBorder(true)}
