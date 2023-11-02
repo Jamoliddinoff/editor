@@ -80,7 +80,11 @@ const LeftPanel = () => {
             <hr/>
             <Tooltip title={'Draw arrow'}>
                 <Item
-                    onClick={()=>handleEvents(EVENT_TYPES.ARROW)}
+                    onClick={()=>{
+                        handleEvents(EVENT_TYPES.ARROW);
+                        // window.location.reload(false);
+
+                    }}
                     style={{background:type === EVENT_TYPES.ARROW ? "#4a515d" : null}}
                 >
                     <img src={arrowIcon}/>

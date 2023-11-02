@@ -131,6 +131,7 @@ const KonvaShape = ({shape,isSelected,onSelect,setChildDrag,boardEnd}) => {
                     handleDragMove={handleDragMove}
                     onSelect={onSelect}
                     isSelected={isSelected}
+                    boardEnd={boardEnd}
                 />
             </>
         )

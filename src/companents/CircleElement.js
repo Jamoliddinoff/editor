@@ -8,7 +8,7 @@ import {handleShape, removeShape, setShape} from "../store/shapesSlice";
 import {getStyle} from "./TextElement";
 import styled from "styled-components";
 
-const CircleElement = ({shape,handleDragStart,handleDragEnd,handleDragMove,onSelect,isSelected}) => {
+const CircleElement = ({shape,handleDragStart,handleDragEnd,handleDragMove,onSelect,isSelected,boardEnd}) => {
     const dispatch = useDispatch();
     const {eventsType:{type}} = useSelector(store => store)
     const shapeRef = React.useRef();
@@ -113,17 +113,26 @@ const CircleElement = ({shape,handleDragStart,handleDragEnd,handleDragMove,onSel
                         if (newBox.width < 5 || newBox.height < 5) {
                             dispatch(setShape(
                                 {
-                                    width:oldBox.width,
+                                    radius:Math.round(oldBox.width/2),
                                     height:oldBox.height,
+                                    width:oldBox.width,
+                                    // x:oldBox.x-boardEnd.x,
+                                    // y:oldBox.y-boardEnd.y,
                                     id
                                 }))
+                            console.log('oldBox-------',oldBox)
                             return oldBox;
                         }
                         dispatch(setShape({
-                            width:newBox.width,
-                            height:newBox.height,
+                            radius:Math.round(oldBox.width/2),
+                            height:Math.round(newBox.height),
+                            width:Math.round(newBox.width),
+                            // x:newBox.x-boardEnd.x,
+                            // y:newBox.y-boardEnd.y,
                             id
                         }))
+                        console.log('newBox-------',oldBox)
+
                         return newBox;
                     }}
                 />

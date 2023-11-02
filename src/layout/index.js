@@ -32,10 +32,7 @@ const AppLayout = () => {
     const [childDrag,setChildDrag] = useState(false)
     const [scale, setScale] = useState(1);
     const [position, setPosition] = useState({ x: 0, y: 0 });
-    const [state,setState]= useState({
-        hovered:false,
-        zoom:false
-    })
+    const [newPointer,setNewPointer] = useState(1)
     const [childShape,setChildShape] = useState()
 
     useEffect(()=>{
@@ -66,27 +63,29 @@ const AppLayout = () => {
 
         }
         if(EVENT_TYPES.ARROW==type){
-            setScale(1);
-            setPosition({x:0,y:0});
             setArrowPosition(null);
             setFromShape(null);
-            stageRef=null
+            // debugger
         }
     },[type])
 
     const handleWheel = (e) => {
         e.evt.preventDefault();
-        const scaleBy = 1.05;
-        const stage = stageRef.current.getStage();
-        const oldScale = stageRef.current.scaleX();
+        if(
+            // EVENT_TYPES.ARROW===type||
+            EVENT_TYPES.CURSOR===type
+        ){
+            const scaleBy = 1.05;
+            const stage = stageRef.current.getStage();
+            const oldScale = stageRef?.current?.scaleX();
 
-        const pointer = stageRef.current.getPointerPosition();
-        const mousePointTo = {
-            x: (pointer.x - stage.x()) / oldScale,
-            y: (pointer.y - stage.y()) / oldScale,
-        };
-        const newScale = e.evt.deltaY > 0 ? oldScale * scaleBy : oldScale / scaleBy;
-        if(EVENT_TYPES.CURSOR===type){
+            const pointer = stageRef.current.getPointerPosition();
+            const mousePointTo = {
+                x: (pointer.x - stage.x()) / oldScale,
+                y: (pointer.y - stage.y()) / oldScale,
+            };
+            const newScale = e.evt.deltaY > 0 ? oldScale * scaleBy : oldScale / scaleBy;
+
             setPosition(
                 {x: -(mousePointTo.x - pointer.x / newScale) * newScale,
                 y: -(mousePointTo.y - pointer.y / newScale) * newScale,
@@ -97,7 +96,6 @@ const AppLayout = () => {
 
     const handleMouseDown = e => {
         const { x, y } = e.target.getStage().getPointerPosition();
-        // const {x,y} = getDragPosition(e.target.getStage().getPointerPosition().x,e.target.getStage().getPointerPosition().y)
         const element = e.target?.attrs
         let x1 = x-element.x-boardEnd.x;
         let y1 = y-element.y-boardEnd.y;
@@ -241,7 +239,6 @@ const AppLayout = () => {
 
     const handleMouseUp = e => {
         const { x, y } = e.target.getStage().getPointerPosition();
-        // const {x,y} = getDragPosition(e.target.getStage().getPointerPosition().x,e.target.getStage().getPointerPosition().y)
         const element = e.target?.attrs
         let x1 = x-element.x-boardEnd.x;
         let y1 = y-element.y-boardEnd.y;
@@ -294,7 +291,6 @@ const AppLayout = () => {
     };
 
     const handleMouseMove = e => {
-        // const {x,y} = getDragPosition(e.target.getStage().getPointerPosition().x,e.target.getStage().getPointerPosition().y)
         const {x,y} = e.target.getStage().getPointerPosition()
         const element = e.target?.attrs
         let x1 = x-element.x-boardEnd.x;
@@ -314,9 +310,8 @@ const AppLayout = () => {
             }
             else arrowPosition && setArrowPosition({...arrowPosition,toX:x-boardEnd.x,toY:y-boardEnd.y})
         }
-        // console.log('x1: ',x1,' y1: ',y1);
-        // console.log('x: ',x,' y: ',y);
-        // console.log('shape: ',e.target.attrs)
+        console.log('x1: ',x1,' y1: ',y1);
+        console.log('shape: ',e.target.attrs)
         // getShapeSide(x,y)
         if (EVENT_TYPES.HOTSPOT== type){
             if(element?.image){
@@ -337,7 +332,9 @@ const AppLayout = () => {
 
     const DrawArrow = () => {
         // const {fromX, fromY, toX, toY,fromId,toId} = arrowPosition;
-        const direction = [arrowPosition?.fromX, arrowPosition?.fromY, arrowPosition?.toX, arrowPosition?.toY]
+        // let direction = [from?.x + 80, from?.y, to?.x - 80, to?.y]
+
+        const direction = [arrowPosition?.fromX+80, arrowPosition?.fromY, arrowPosition?.toX-80, arrowPosition?.toY]
         return EVENT_TYPES.ARROW===type && <Arrow
             points={[arrowPosition?.fromX, arrowPosition?.fromY,...direction, arrowPosition?.toX, arrowPosition?.toY]}
             stroke={"#020202"}
@@ -356,7 +353,6 @@ const AppLayout = () => {
     }
     const DrawHotspot = () => {
         // const {fromX, fromY, toX, toY,fromId,toId} = arrowPosition;
-        const direction = [arrowPosition?.fromX, arrowPosition?.fromY, arrowPosition?.toX, arrowPosition?.toY]
         return EVENT_TYPES.HOTSPOT===type && <Rect
             ref={childElem}
             fill={'#75bde8'}
@@ -380,31 +376,14 @@ const AppLayout = () => {
 
     };
 
-
-    const onMouseEnterHandler=(e)=>{
-        e.target.fill('blue');
-        stageRef.draw();
-        setState({
-            hovered:true,
-            zoom:true
-        })
-    }
-    const onMouseLeaveHandler=(e)=>{
-        e.target.fill('white');
-        stageRef.draw();
-        setState({
-            hovered:false,
-            zoom:false
-        })
-    };
     return (
         <Stage
             width={window.innerWidth}
             height={window.innerHeight}
             ref={stageRef}
             draggable
-            scaleX={scale}
-            scaleY={scale}
+            scaleX={EVENT_TYPES.ARROW === type ? 1: scale}
+            scaleY={EVENT_TYPES.ARROW === type ? 1: scale}
             x={position.x}
             y={position.y}
             onMouseDown={handleMouseDown}
@@ -419,7 +398,10 @@ const AppLayout = () => {
                     {DrawArrow()}
                     {DrawHotspot()}
                     <Connectors  connectors={arrows} list={list} boardEnd={boardEnd}/>
-                    <Shapes list={list} setChildDrag={(bool)=>setChildDrag(bool)} boardEnd={boardEnd}/>
+                    <Shapes
+                        list={list}
+                        setChildDrag={(bool)=>setChildDrag(bool)}
+                        boardEnd={boardEnd}/>
                 </Group>
             </Layer>
         </Stage>
